@@ -1,0 +1,110 @@
+---
+title: "beta_estimation_DM"
+output: html_document
+date: '2024-04-24'
+---
+
+
+```{r}
+
+# Load the data reading package
+library(readr)
+
+# Set working directory
+setwd("C:/Users/UtentePc/Dropbox (Politecnico Di Torino Studenti)/GroupWork ACFPC/Beta")
+
+# Import company data
+impresa1 <- read_csv("DM.csv")
+
+# Import market data
+mercato1 <- read_csv("^IXIC.csv")
+
+# Calculate daily returns for the company
+impresa1$impresa_return <- c(NA, diff(impresa1$Close) / impresa1$Open[-nrow(impresa1)])
+
+# Calculates daily returns for the market
+mercato1$mercato_return <- c(NA, diff(mercato1$Close) / mercato1$Open[-nrow(mercato1)])
+
+# Remove the first observation for both variables, as it has no valid performance
+impresa1 <- impresa1[-1,]
+mercato1 <- mercato1[-1,]
+
+# Merge the two datasets based on the 'Date' column
+merged_data1 <- merge(impresa1, mercato1, by = "Date", all = FALSE)
+
+# Run linear regression to estimate beta
+model1 <- lm(impresa_return ~ mercato_return, data = merged_data1)
+
+# Extract the beta coefficient
+beta1 <- coef(model1)["mercato_return"]
+
+# Show result
+print(paste("Il beta1 dell'impresa è:", beta1))
+
+summary(model1)
+
+```
+
+
+```{r}
+
+# Create the scatter plot of returns
+plot(merged_data1$mercato_return, merged_data1$impresa_return,
+     xlab = "r_^IXIC", ylab = "r_DM")
+
+# Add the regression line
+abline(model1, col = "red")
+
+```
+
+
+```{r}
+
+# Load the data reading package
+library(readr)
+
+# Set working directory
+setwd("C:/Users/UtentePc/Dropbox (Politecnico Di Torino Studenti)/GroupWork ACFPC/Beta")
+
+# Import company data
+impresa2 <- read_csv("DM.csv")
+
+# Import market data
+mercato2 <- read_csv("PRNT.csv")
+
+# Calculate daily returns for the company
+impresa2$impresa_return <- c(NA, diff(impresa2$Close) / impresa2$Open[-nrow(impresa2)])
+
+# Calculates daily returns for the market
+mercato2$mercato_return <- c(NA, diff(mercato2$Close) / mercato2$Open[-nrow(mercato2)])
+
+# Remove the first observation for both variables, as it has no valid performance
+impresa2 <- impresa2[-1,]
+mercato2 <- mercato2[-1,]
+
+# Merge the two datasets based on the 'Date' column
+merged_data2 <- merge(impresa2, mercato2, by = "Date", all = FALSE)
+
+# Run linear regression to estimate beta
+model2 <- lm(impresa_return ~ mercato_return, data = merged_data2)
+
+# Extract the beta coefficient
+beta2 <- coef(model2)["mercato_return"]
+
+# Show result
+print(paste("Il beta2 dell'impresa è:", beta2))
+
+```
+
+
+```{r}
+# Create the scatter plot of returns
+plot(merged_data2$mercato_return, merged_data2$impresa_return,
+     xlab = "r_PRNT", ylab = "r_DM",
+     main = "Scatter plot of returns")
+
+# Add the regression line
+abline(model2, col = "red")
+
+```
+
